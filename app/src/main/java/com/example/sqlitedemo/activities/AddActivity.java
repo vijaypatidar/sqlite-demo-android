@@ -6,6 +6,7 @@ import android.os.Bundle;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.Toast;
 
 import androidx.appcompat.app.AppCompatActivity;
 
@@ -19,6 +20,7 @@ public class AddActivity extends AppCompatActivity {
     Button btnAdd;
     SQLiteDatabase db;
     private boolean isUpdate = false;
+    String key;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -41,11 +43,13 @@ public class AddActivity extends AppCompatActivity {
                 String price = ePrice.getText().toString();
                 String quantity = eQuantity.getText().toString();
                 String query;
-                if (isUpdate)
-                    query = "update product set name = '" + name + "'" + ",price= " + price + " quantity=" + quantity;
-                else
+                if (isUpdate) {
+                    query = "update product set name = '" + name + "'" + ",price= " + price + " , quantity=" + quantity + " where id=" + key;
+                } else {
                     query = "insert into product(name,price,quantity) values ('" + name + "'," + price + "," + quantity + ")";
+                }
                 db.execSQL(query);
+                Toast.makeText(AddActivity.this, "Data inserted/updated", Toast.LENGTH_SHORT).show();
             }
         });
 
@@ -55,13 +59,21 @@ public class AddActivity extends AppCompatActivity {
     }
 
     void fetchDetail() {
-        String key = getIntent().getStringExtra("key");
+        key = getIntent().getStringExtra("key");
         String query = "select * from product where id=" + key;
         Cursor cursor = Database.getInstance(this).getReadableDatabase()
                 .rawQuery(query, null);
-        Product product = new Product(cursor);
-        eName.setText(product.getName());
-        eQuantity.setText(product.getQuantity());
-        ePrice.setText(String.format("%s", product.getPrice()));
+
+        if (cursor.moveToNext()) {
+
+            Product product = new Product(cursor);
+
+            final String name = product.getName();
+            final String price = +product.getPrice() + "";
+            String quantity = product.getQuantity() + "";
+            eName.setText(name);
+            eQuantity.setText(quantity);
+            ePrice.setText(price);
+        }
     }
 }

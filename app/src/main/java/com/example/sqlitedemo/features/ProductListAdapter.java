@@ -42,11 +42,11 @@ public class ProductListAdapter extends RecyclerView.Adapter<ProductListAdapter.
         final String name = product.getName();
         final String price = "Price : " + product.getPrice();
         String quantity = "Quantity : " + product.getQuantity();
-        String id = "Id : " + product.getId();
         holder.pName.setText(name);
         holder.pPrice.setText(price);
         holder.pQuantity.setText(quantity);
-        holder.pId.setText(id);
+
+        //event on click
         holder.itemView.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -59,7 +59,7 @@ public class ProductListAdapter extends RecyclerView.Adapter<ProductListAdapter.
                     public void onClick(DialogInterface dialogInterface, int i) {
                         Intent intent = new Intent(context, AddActivity.class);
                         intent.putExtra("update", true);
-                        intent.putExtra("key", product.getId());
+                        intent.putExtra("key", String.valueOf(product.getId()));
                         context.startActivity(intent);
                     }
                 });
@@ -67,6 +67,8 @@ public class ProductListAdapter extends RecyclerView.Adapter<ProductListAdapter.
 
             }
         });
+
+        // event on long click
         holder.itemView.setOnLongClickListener(new View.OnLongClickListener() {
             @Override
             public boolean onLongClick(View view) {
@@ -98,11 +100,10 @@ public class ProductListAdapter extends RecyclerView.Adapter<ProductListAdapter.
 
     class MyViewHolder extends RecyclerView.ViewHolder implements View.OnCreateContextMenuListener {
 
-        TextView pName, pId, pPrice, pQuantity;
+        TextView pName, pPrice, pQuantity;
 
         MyViewHolder(@NonNull final View itemView) {
             super(itemView);
-            pId = itemView.findViewById(R.id.pId);
             pName = itemView.findViewById(R.id.pName);
             pPrice = itemView.findViewById(R.id.pPrice);
             pQuantity = itemView.findViewById(R.id.pQuantity);
